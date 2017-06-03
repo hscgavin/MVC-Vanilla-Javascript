@@ -55,7 +55,7 @@
     var defaultApi = 'http://marketplace.envato.com/api/edge/popular:themeforest.json';
 
     // Define states
-    this.items = items;
+    this.itemsOfLastWeek = items;
     this.fetching = false;
     this.error = false;
     this.api = api || defaultApi;
@@ -75,13 +75,13 @@
 
       callback = callback || function () {};
 
-      for (var i = 0; i < self.items.length; i++) {
-        if (self.items[i].id == id) {
-          self.items.splice(i, 1);
+      for (var i = 0; i < self.itemsOfLastWeek.length; i++) {
+        if (self.itemsOfLastWeek[i].id == id) {
+          self.itemsOfLastWeek.splice(i, 1);
           break;
         }
       }
-      callback.call(self, self.items);
+      callback.call(self, self.itemsOfLastWeek);
     },
 
 
@@ -112,17 +112,17 @@
     },
 
     /**
-     * retrieving all items
-     * If there are no items, retrieve items from api endpoint
+     * retrieving all itemsOfLastWeek
+     * If there are no itemsOfLastWeek, retrieve itemsOfLastWeek from api endpoint
      *
      * @param callback The callback fire after data returns (e.g. update view from ctrl)
      */
     getItems: function (callback) {
       var self = this;
-      if (!self.items) {
+      if (!self.itemsOfLastWeek) {
         this.fetchData(this.api).then(function (res) {
-          self.lastWeekItems = res && res.popular && res.popular.items_last_week || [];
-          callback.call(self, self.lastWeekItems)
+          self.itemsOfLastWeek = res && res.popular && res.popular.items_last_week || [];
+          callback.call(self, self.itemsOfLastWeek)
         })
       }
     }
@@ -146,16 +146,16 @@
     // Easy to make mistakes here, in reality we can use ES6 template string instead
     var defaultTemplate
       = '<div data-id="{{id}}" class="{{classname}}"'
-      + '<a class="thumbnail-link" href="{{url}}">'
-      + '<img class="thumbnail" src="{{thumbnail}}" alt="{{item}}">'
-      + '</a>'
-      + '<div class="info">'
-      + '<a class="header-link" href="{{url}}">'
-      + '<span class="header">{{item}}</span>'
-      + '</a>'
-      + '<span class="rating">Rating: {{rating}}</span>'
-      + '<button class="removeBtn">Remove</button>'
-      + '</div>'
+      +   '<a class="thumbnail-link" href="{{url}}">'
+      +     '<img class="thumbnail" src="{{thumbnail}}" alt="{{item}}">'
+      +   '</a>'
+      +   '<div class="info">'
+      +     '<a class="header-link" href="{{url}}">'
+      +       '<span class="header">{{item}}</span>'
+      +     '</a>'
+      +     '<span class="rating">Rating: {{rating}}</span>'
+      +     '<button class="removebtn">Remove</button>'
+      +   '</div>'
       + '</div>';
 
     this.template = template || defaultTemplate;
@@ -173,19 +173,22 @@
     simpleTemplate: function (templateString, data) {
       // copy data
       var newData = JSON.parse(JSON.stringify(data));
-      newData.classname= data.rating == '5.0' ? 'five-stars item-wrapper' : 'item-wrapper';
+      var viewString = templateString;
+      newData.classname = data.rating == '5.0' ? 'five-stars item-wrapper' : 'item-wrapper';
       var dataToBeReplaced = [
         'id',
         'classname',
+        'thumbnail',
+        'rating',
         'url',
         'item'
       ];
-      var viewString = dataToBeReplaced.reduce(function (val) {
-        // e.g. replace {{item}} with data.item
-        var find = '{{'+ val +'}}';
+
+      for (var i=0; i < dataToBeReplaced.length; i++) {
+        var find = '{{'+ dataToBeReplaced[i] +'}}';
         var re = new RegExp(find, 'g');
-        return templateString.replace(re, data[val])
-      });
+        viewString = viewString.replace(re, newData[dataToBeReplaced[i]])
+      }
 
       return viewString;
 
@@ -195,8 +198,9 @@
      * Render all items
      *
      * @param {array} items: all items to be displayed
+     * @param {function} callback get run after DOM is ready
      */
-    showListItems: function (items) {
+    showListItems: function (items, callback) {
       var self = this;
       var listView = items.reduce(function (view, item) {
         return view + self.simpleTemplate(self.template, item)
@@ -204,6 +208,8 @@
 
       // Render DOM
       self.$container.innerHTML = listView;
+      // callback for binding events
+      if (callback) callback.call(self)
     },
 
     /**
@@ -212,13 +218,38 @@
      * @param {string || number} id of the item to remove
      */
     removeItem: function (id) {
-      var el = this.element.querySelector('[data-id="' + id + '"]');
+      var el = this.$container.querySelector('[data-id="' + id + '"]');
       if (el) {
         this.$container.removeChild(el);
       }
+    },
+
+    /**
+     * Bind event and handler
+     *
+     * @param event
+     * @param handler
+     */
+    bind: function (event, handler) {
+      // can bind different event
+
+      var self = this;
+
+      switch (event) {
+        case 'removeItem':
+          var $removeBtns = self.$container.querySelectorAll('.removebtn')
+          // Prevent throwing error if $removeBtns is an empty array
+          if ($removeBtns.length) {
+            addEventListener('click', function (e) {
+              console.log(e.target)
+              handler(e.target.attributes)
+            })
+          }
+        break;
+      }
     }
 
-  }
+  };
 
   //**********************
   // Controller
@@ -240,6 +271,15 @@
 
 
   Controller.prototype = {
+    
+    
+    bindEvents: function () {
+      var self = this;
+      self.view.bind('removeItem', function (id) {
+        self.removeItem(id);
+      });
+      // All event bindings should go here
+    },
 
 
     /**
@@ -248,7 +288,9 @@
     loadAllItems: function () {
       var self = this;
       self.model.getItems(function (data) {
-        self.view.showListItems(data)
+        self.view.showListItems(data, function () {
+          self.bindEvents()
+        })
       })
     },
 
@@ -261,7 +303,7 @@
      */
     removeItem: function (id) {
       var self = this;
-      self.model.remove(id, function () {
+      self.model.removeItem(id, function () {
         self.view.removeItem(id)
       });
 
