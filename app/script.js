@@ -55,7 +55,8 @@
     var defaultApi = 'http://marketplace.envato.com/api/edge/popular:themeforest.json';
 
     // Define states
-    this.itemsOfLastWeek = items;
+    // Sorted items by rating_decimal
+    this.itemsOfLastWeek = items && items.length && this.sortItemsByRating(items);
     this.fetching = false;
     this.error = false;
     this.api = api || defaultApi;
@@ -108,7 +109,7 @@
             errorCallback.call(self, 'There was an error 400');
           }
           else {
-            self.error = true
+            self.error = true;
             errorCallback.call(self, 'something else other than 200 was returned');
           }
           self.fetching = false;
@@ -132,7 +133,8 @@
         self.fetchData(
           self.api,
           function (res) {
-            self.itemsOfLastWeek = res && res.popular && res.popular.items_last_week || [];
+            var items = res && res.popular && res.popular.items_last_week || [];
+            self.itemsOfLastWeek = self.sortItemsByRating(items);
             callback.call(self, self.itemsOfLastWeek);
           },
           function (res) {
@@ -140,6 +142,21 @@
           }
         )
       }
+    },
+
+    /**
+     * Sort items in rating from highest to lowest
+     *
+     * @param {Array}items the list of items data
+     * @returns {Array}
+     */
+    
+    sortItemsByRating: function (items) {
+      var orderedItems = items.slice(0);
+      orderedItems.sort(function (a, b) {
+        return parseFloat(b.rating_decimal).toFixed(2) - parseFloat(a.rating_decimal).toFixed(2)
+      });
+      return orderedItems;
     }
 
   };
@@ -346,7 +363,7 @@
   function App() {
 		this.store = new envato.Store();
 		this.model = new envato.ListModel(this.store);
-		this.view = new envato.View(null, document.getElementById('main'));
+		this.view = new envato.View(null, document.getElementById('main')); // use default template
 		this.controller = new envato.Controller(this.model, this.view);
 	}
 	var app = new App();
