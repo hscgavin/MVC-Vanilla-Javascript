@@ -177,7 +177,7 @@
   function View(template, element) {
     // Easy to make mistakes here, in reality we can use ES6 template string instead
     var defaultTemplate
-      = '<div data-id="{{id}}" class="{{classname}}"'
+      = '<div data-id="{{id}}" class="{{classname}}">'
       +   '<a class="thumbnail-link" href="{{url}}">'
       +     '<img class="thumbnail" src="{{thumbnail}}" alt="{{item}}">'
       +   '</a>'
