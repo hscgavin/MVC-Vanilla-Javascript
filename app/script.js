@@ -121,7 +121,7 @@
       var self = this;
       if (!self.items) {
         this.fetchData(this.api).then(function (res) {
-          self.lastWeekItems = res && res.popular && res.popular.items_last_week || []
+          self.lastWeekItems = res && res.popular && res.popular.items_last_week || [];
           callback.call(self, self.lastWeekItems)
         })
       }
@@ -147,7 +147,7 @@
     // We need template engine here
     // todo: Rewrite this underscore template as we don't want to use library
     var defaultTemplate
-    = '<div data-id="{{id}}" class="<% if(rating == 5.0) { %> five-stars<% }%> item-wrapper"'
+    = '<div data-id="{{id}}" class="{{classname}}"'
     +  '<a class="thumbnail-link" href="{{url}}">'
     +     '<img class="thumbnail" src="{{thumbnail}}" alt="{{item}}">'
     +  '</a>'
@@ -161,7 +161,66 @@
 		+	'</div>';
 
     this.template = template || defaultTemplate;
-    this.element = element;
+    this.$container = element;
+
+    View.prototype = {
+
+      /**
+       * a simple template engine to render template string
+       *
+       * @param templateString
+       * @param data data is for replacing {{xx}}
+       */
+      simpleTemplate: function (templateString, data) {
+        // copy data
+        var newData = JSON.parse(JSON.stringify(data));
+        newData.classname= data.rating == '5.0' ? 'five-stars item-wrapper' : 'item-wrapper';
+        var dataToBeReplaced = [
+          'id',
+          'classname',
+          'url',
+          'item'
+        ];
+        var viewString = dataToBeReplaced.reduce(function (val) {
+          // e.g. replace {{item}} with data.item
+          var find = '{{'+ val +'}}';
+          var re = new RegExp(find, 'g');
+          return templateString.replace(re, data[val])
+        });
+
+        return viewString;
+
+      },
+
+      /**
+       * Render all items
+       *
+       * @param {array} items: all items to be displayed
+       */
+      showListItems: function (items) {
+        var self = this;
+        var listView = items.reduce(function (view, item) {
+          return view + self.simpleTemplate(self.template, item)
+        }, '')
+
+        // Render DOM
+        self.$container.innerHTML = listView;
+      },
+
+      /**
+       * Removes an item from DOM
+       *
+       * @param {string || number} id of the item to remove
+       */
+      removeItem: function (id) {
+        var el = this.element.querySelector('[data-id="' + id + '"]');
+        if (el) {
+          this.$container.removeChild(el);
+        }
+      }
+
+    }
+
   }
 
 
