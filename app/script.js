@@ -130,4 +130,40 @@
   };
 
 
+
+  //**********************
+  // View
+  //**********************
+
+  /**
+   * Creates a View instance to render element with data
+   *
+   * @constructor
+   * @param {string} template string
+   * @param {object} element is for this view to be mounted to
+   */
+  function View(template, element) {
+    // Easy to make mistakes here, in reality we can use ES6 template string instead
+    // We need template engine here
+    // todo: Rewrite this underscore template as we don't want to use library
+    var defaultTemplate
+    = '<div data-id="{{id}}" class="<% if(rating == 5.0) { %> five-stars<% }%> item-wrapper"'
+    +  '<a class="thumbnail-link" href="{{url}}">'
+    +     '<img class="thumbnail" src="{{thumbnail}}" alt="{{item}}">'
+    +  '</a>'
+		+	 '<div class="info">'
+    +     '<a class="header-link" href="{{url}}">'
+		+			  '<span class="header">{{item}}</span>'
+    +     '</a>'
+		+			'<span class="rating">Rating: {{rating}}</span>'
+		+			'<button class="removeBtn">Remove</button>'
+		+		'</div>'
+		+	'</div>';
+
+    this.template = template || defaultTemplate;
+    this.element = element;
+  }
+
+
+
 })(window);
