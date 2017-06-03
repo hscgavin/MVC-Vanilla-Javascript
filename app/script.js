@@ -89,26 +89,35 @@
      *  Fetch data from API endpoint
      *
      * @param {string} api
-     * @param {callback} callback function
+     * @param {function} successCallback handle successful ajax return data
+     * @param {function} errorCallback handle error
      */
-    fetchData: function (api, callback) {
+    fetchData: function (api, successCallback, errorCallback) {
       var self = this;
       self.fetching = true;
-      // Return a promise
-      return fetch(api)
-        .then((function (res) {
-          if (!res.ok) throw Error(res.status);
-          return res;
-        }))
-        .then(function (res) {
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+          if (xhr.status == 200) {
+            successCallback.call(self, JSON.parse(xhr.responseText))
+          }
+          else if (xhr.status == 400) {
+            self.error = true;
+            errorCallback.call(self, 'There was an error 400');
+          }
+          else {
+            self.error = true
+            errorCallback.call(self, 'something else other than 200 was returned');
+          }
           self.fetching = false;
-          return res.json()
-        })
-        .catch(function () {
-          self.fetching = false;
-          // Deal with error later, let it fallback to empty obj for now
-          return {data: {}}
-        });
+        }
+      };
+
+      xhr.open("GET", api, true);
+      xhr.send();
+
     },
 
     /**
@@ -120,10 +129,16 @@
     getItems: function (callback) {
       var self = this;
       if (!self.itemsOfLastWeek) {
-        this.fetchData(this.api).then(function (res) {
-          self.itemsOfLastWeek = res && res.popular && res.popular.items_last_week || [];
-          callback.call(self, self.itemsOfLastWeek)
-        })
+        self.fetchData(
+          self.api,
+          function (res) {
+            self.itemsOfLastWeek = res && res.popular && res.popular.items_last_week || [];
+            callback.call(self, self.itemsOfLastWeek);
+          },
+          function (res) {
+            alert(res); // handle error
+          }
+        )
       }
     }
 
