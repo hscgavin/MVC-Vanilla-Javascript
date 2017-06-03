@@ -144,8 +144,6 @@
    */
   function View(template, element) {
     // Easy to make mistakes here, in reality we can use ES6 template string instead
-    // We need template engine here
-    // todo: Rewrite this underscore template as we don't want to use library
     var defaultTemplate
       = '<div data-id="{{id}}" class="{{classname}}"'
       + '<a class="thumbnail-link" href="{{url}}">'
@@ -221,6 +219,55 @@
     }
 
   }
+
+  //**********************
+  // Controller
+  //**********************
+
+  /**
+	 * Create Controller instance
+   * TO glue them together
+	 *
+	 * @constructor
+	 * @param {object} model The model instance
+	 * @param {object} view The view instance
+	 */
+
+  function Controller(model, view) {
+    this.model = model;
+    this.view = view;
+  }
+
+
+  Controller.prototype = {
+
+
+    /**
+     * Load all items, should get called on window on load event
+     */
+    loadAllItems: function () {
+      var self = this;
+      self.model.getItems(function (data) {
+        self.view.showListItems(data)
+      })
+    },
+
+
+    /**
+     * Find the DOM element matching that ID,
+     * remove it from the DOM and remove it from store.
+     *
+     * @param {number || string} id The ID of the item to remove from the DOM and store
+     */
+    removeItem: function (id) {
+      var self = this;
+      self.model.remove(id, function () {
+        self.view.removeItem(id)
+      });
+
+    }
+
+  };
 
 
 
