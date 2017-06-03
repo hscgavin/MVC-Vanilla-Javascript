@@ -27,9 +27,18 @@
 	 */
     removeItem: function (id, callback) {
       this.store.removeItem(id, callback);
+    },
+
+  /**
+	 * Return last_week_items from store
+   *
+   * @param {function} callback The callback to fire upon retrieving data
+	 */
+    getItems: function (callback) {
+      return this.store.getItems(callback)
     }
 
-  }
+  };
 
 
 
@@ -44,32 +53,81 @@
    */
   function Store(items, api) {
     var defaultApi = 'http://marketplace.envato.com/api/edge/popular:themeforest.json';
+
+    // Define states
     this.items = items;
     this.fetching = false;
     this.error = false;
     this.api = api || defaultApi;
   }
 
-  /**
-	 * Remove an item by id from the Store
-   * In reality, we delete item in DB by sending a ajax to Api endpoint
-	 *
-	 * @param {number} remove item by id
-	 * @param {function} callback executes after
-	 */
-	Store.prototype.removeItem = function (id, callback) {
-	  var self = this;
+  Store.prototype = {
 
-	  callback = callback || function () {};
+    /**
+     * Remove an item by id from the Store
+     * In reality, we delete item in DB by sending a ajax to Api endpoint
+     *
+     * @param {number} id is the id of item we want to remove
+     * @param {function} callback is a function executes after
+     */
+    removeItem: function (id, callback) {
+      var self = this;
 
-		for (var i = 0; i < self.items.length; i++) {
-			if (self.items[i].id == id) {
-				self.items.splice(i, 1);
-				break;
-			}
-		}
-		callback.call(self, self.items);
-	};
+      callback = callback || function () {};
+
+      for (var i = 0; i < self.items.length; i++) {
+        if (self.items[i].id == id) {
+          self.items.splice(i, 1);
+          break;
+        }
+      }
+      callback.call(self, self.items);
+    },
+
+
+    /**
+     *  Fetch data from API endpoint
+     *
+     * @param {string} api
+     * @param {callback} callback function
+     */
+    fetchData: function (api, callback) {
+      var self = this;
+      self.fetching = true;
+      // Return a promise
+      return fetch(api)
+        .then((function (res) {
+          if (!res.ok) throw Error(res.status);
+          return res;
+        }))
+        .then(function (res) {
+          self.fetching = false;
+          return res.json()
+        })
+        .catch(function () {
+          self.fetching = false;
+          // Deal with error later, let it fallback to empty obj for now
+          return {data: {}}
+        });
+    },
+
+    /**
+     * retrieving all items
+     * If there are no items, retrieve items from api endpoint
+     *
+     * @param callback The callback fire after data returns (e.g. update view from ctrl)
+     */
+    getItems: function (callback) {
+      var self = this;
+      if (!self.items) {
+        this.fetchData(this.api).then(function (res) {
+          self.lastWeekItems = res && res.popular && res.popular.items_last_week || []
+          callback.call(self, self.lastWeekItems)
+        })
+      }
+    }
+
+  };
 
 
 })(window);
