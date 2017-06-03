@@ -154,7 +154,7 @@
       +       '<span class="header">{{item}}</span>'
       +     '</a>'
       +     '<span class="rating">Rating: {{rating}}</span>'
-      +     '<button class="removebtn">Remove</button>'
+      +     '<button data-itemId="{{id}}" class="removebtn">Remove</button>'
       +   '</div>'
       + '</div>';
 
@@ -204,7 +204,7 @@
       var self = this;
       var listView = items.reduce(function (view, item) {
         return view + self.simpleTemplate(self.template, item)
-      }, '')
+      }, '');
 
       // Render DOM
       self.$container.innerHTML = listView;
@@ -241,9 +241,8 @@
           // Prevent throwing error if $removeBtns is an empty array
           if ($removeBtns.length) {
             addEventListener('click', function (e) {
-              console.log(e.target)
-              handler(e.target.attributes)
-            })
+              handler(e.target.getAttribute('data-itemId'));
+            });
           }
         break;
       }
