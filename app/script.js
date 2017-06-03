@@ -269,6 +269,34 @@
 
   };
 
+  // Expose them with namespace envato
+  window.envato = {};
+  window.envato.Store = Store;
+  window.envato.ListModel = ListModel;
+  window.envato.View = View;
+  window.envato.Controller = Controller;
 
 
 })(window);
+
+
+
+
+// App Entry point
+(function () {
+  'use strict';
+
+
+  function App() {
+		this.store = new envato.Store();
+		this.model = new envato.ListModel(this.store);
+		this.view = new envato.View(null, document.getElementById('main'));
+		this.controller = new envato.Controller(this.model, this.view);
+	}
+	var app = new App();
+
+  window.addEventListener('load', function () {
+    app.controller.loadAllItems();
+  });
+
+})();
