@@ -79,8 +79,8 @@
 
         /*****************
          *   TEST Model
-         *   We don't really need to test here
-         *   as we put data logic in Store
+         *   We don't really need to test model here
+         *   as we have moved data logic to Store
          ******************/
         (function () {
 
@@ -117,15 +117,14 @@
             .toInclude(items[0].thumbnail);
 
           // test showListItems
-          view.showListItems(items, function () {
-          });
+          view.showListItems(items, function () {});
           expect($div.childElementCount).toEqual(2);
 
           // test removeItem
           view.removeItem('002');
           expect($div.childElementCount).toEqual(1);
           expect($div.innerHTML).toInclude('<div data-id="001" class="content-container__item-wrapper">');
-          // remove again
+          // remove again, nothing happens
           view.removeItem('002');
           expect($div.childElementCount).toEqual(1);
           view.removeItem('001');
@@ -193,16 +192,9 @@
           expect(spyRemoveItem).toHaveBeenCalledWith('Testing');
           expect(spyStateChanged).toHaveBeenCalledWith('Testing');
 
-
-
-
-        })()
-
+        })();
 
       })();
-
-
-
     </script>
   </body>
 </html>

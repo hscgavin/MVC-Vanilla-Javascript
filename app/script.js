@@ -23,7 +23,7 @@
     },
     // find the sender and run the listener function
     notify: function (args) {
-      for (var i = 0; i < this.listeners.length; i ++) {
+      for (var i = 0; i < this.listeners.length; i++) {
         this.listeners[i](this.sender, args);
       }
     }
@@ -72,7 +72,7 @@
    * Create a Store object for separation of concerns and better reuse
    * For simplicity, make a ajax call to initiate the store data
    *
-   * @param {array} items we can pass in for testing or let store to fetch data from api
+   * @param {Array} items we can pass in for testing or let store to fetch data from api
    * @param {string} api endpoint for fetching data
    */
   function Store(items, api) {
@@ -266,7 +266,7 @@
     /**
      * Render all items
      *
-     * @param {array} items: all items to be displayed
+     * @param {Array} items: all items to be displayed
      * @param {function} callback get run after DOM is ready
      */
     showListItems: function (items, callback) {
