@@ -16,14 +16,15 @@
     <script>
       // Tests
       // Failing tests can be seen in your browser console
-
+      // unit tests should be written before development
+      // Need improvement
       (function () {
 
         var items = [
           {
             "id": "001",
             "item": "Item1",
-            "url": "fakeul1",
+            "url": "fakeurl1",
             "thumbnail": "https://0.s3.envato.com/files/224536384/Thumbnail.jpg",
             "rating": "4.0",
             "rating_decimal": "4.11",
@@ -32,6 +33,7 @@
             "id": "002",
             "item": "item2",
             "url": "fakeurl2",
+            "thumbnail": "https://0.s3.envato.com/files/224536384/Thumbnail.jpg",
             "user": "THEMECO",
             "rating": "5.0",
             "rating_decimal": "4.75",
@@ -90,6 +92,49 @@
           expect(spyRemoveItems).toHaveBeenCalled();
 
         })();
+
+         /*****************
+         *   TEST VIEW
+         ******************/
+        (function () {
+
+          var $div = document.createElement("div");
+          var view = new envato.View(null, $div);
+
+          expect(view.$container).toEqual($div);
+
+          // test simpleTemplate
+          var htmlString = view.simpleTemplate(view.template, items[0]);
+          expect(htmlString)
+            .toInclude('<div data-id="001" class="content-container__item-wrapper">')
+            .toInclude(items[0].rating)
+            .toInclude(items[0].url)
+            .toInclude(items[0].item)
+            .toInclude(items[0].thumbnail);
+
+          // test showListItems
+          view.showListItems(items, function () {});
+          expect($div.childElementCount).toEqual(2);
+
+          // test removeItem
+          view.removeItem('002');
+          expect($div.childElementCount).toEqual(1);
+          expect($div.innerHTML).toInclude('<div data-id="001" class="content-container__item-wrapper">');
+          // remove again
+          view.removeItem('002');
+          expect($div.childElementCount).toEqual(1);
+          view.removeItem('001');
+          expect($div.childElementCount).toEqual(0);
+
+          // test handleStateChanged
+          view.handleStateChanged({"fetching": true});
+          expect(view.$loader.classList.contains('hide')).toNotExist();
+          view.handleStateChanged({"fetching": false});
+          expect(view.$loader.classList.contains('hide')).toExist();
+
+
+        })()
+
 
       })();
 
