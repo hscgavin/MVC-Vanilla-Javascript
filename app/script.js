@@ -178,15 +178,15 @@
     // Easy to make mistakes here, in reality we can use ES6 template string instead
     var defaultTemplate
       = '<div data-id="{{id}}" class="{{classname}}">'
-      +   '<a class="thumbnail-link" href="{{url}}">'
-      +     '<img class="thumbnail" src="{{thumbnail}}" alt="{{item}}">'
+      +   '<a class="content-container__thumbnail-link" href="{{url}}">'
+      +     '<img class="content-container__thumbnail" src="{{thumbnail}}" alt="{{item}}">'
       +   '</a>'
-      +   '<div class="info">'
-      +     '<a class="header-link" href="{{url}}">'
-      +       '<span class="header">{{item}}</span>'
+      +   '<div class="content-container__info">'
+      +     '<a class="content-container__header-link" href="{{url}}">'
+      +       '<span class="content-container__info-header">{{item}}</span>'
       +     '</a>'
-      +     '<span class="rating">Rating: {{rating}}</span>'
-      +     '<button data-itemId="{{id}}" class="removebtn">Remove</button>'
+      +     '<span class="content-container__rating">Rating: {{rating}}</span>'
+      +     '<a data-itemId="{{id}}" class="content-container__removebtn">Remove</a>'
       +   '</div>'
       + '</div>';
 
@@ -206,7 +206,8 @@
       // copy data
       var newData = JSON.parse(JSON.stringify(data));
       var viewString = templateString;
-      newData.classname = data.rating == '5.0' ? 'five-stars item-wrapper' : 'item-wrapper';
+      newData.classname = data.rating == '5.0' ?
+        'five-stars content-container__item-wrapper' : 'content-container__item-wrapper';
       var dataToBeReplaced = [
         'id',
         'classname',
@@ -269,7 +270,7 @@
 
       switch (event) {
         case 'removeItem':
-          var $removeBtns = self.$container.querySelectorAll('.removebtn')
+          var $removeBtns = self.$container.querySelectorAll('.content-container__removebtn')
           // Prevent throwing error if $removeBtns is an empty array
           if ($removeBtns.length) {
             addEventListener('click', function (e) {

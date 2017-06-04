@@ -1,3 +1,8 @@
+/**
+I would define variables if with scss
+Native css variable is not fully supported
+ */
+
 * {
     margin: 0;
     padding: 0;
@@ -24,6 +29,9 @@ body {
     color: white;
     font-size: 14px;
 }
+.global-menu__logo {
+    width: 284px;
+}
 
 .header-container {
     background-color: #F4F7F1;
@@ -48,9 +56,71 @@ body {
     max-width: 1152px;
     padding-left: 10px;
     padding-right: 10px;
+    margin: 0 auto;
 }
 .content-container__header {
     text-align: center;
     max-width: 400px;
     margin: 50px auto;
 }
+
+.content-container__content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.content-container__item-wrapper {
+    max-width: 480px;
+    width: 100%;
+    display: flex;
+    padding: 20px;
+    margin-bottom: 40px;
+    background-color: #E7E7E7;
+}
+.content-container__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-left: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.content-container__header-link {
+    color: #347EB9;
+    text-decoration: none;
+}
+.content-container__header-link:hover {
+    color: #00719b;
+    text-decoration: underline;
+}
+.content-container__removebtn {
+    color: #BE2121;
+    cursor: pointer;
+}
+.content-container__removebtn:hover {
+    color: red;
+}
+.content-container__rating {
+    color: #7D7D7D;
+}
+content-container__thumbnail {
+    width: 80px;
+    height: 80px;
+}
+@media only screen and (max-width : 1024px) {
+    .content-container__content {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media only screen and (max-width: 520px) {
+    .global-menu__logo {
+        width: 155px;
+    }
+    .global-menu__menu {
+        font-size: 12px;
+    }
+}
+
