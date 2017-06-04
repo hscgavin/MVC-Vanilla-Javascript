@@ -6,11 +6,22 @@ Native css variable is not fully supported
 * {
     margin: 0;
     padding: 0;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
+
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+a {
+    color: #347EB9;
+    text-decoration: none;
+}
+a:hover {
+    color: #00719b;
+    text-decoration: underline;
+}
+
 .global-menu {
     background-color: #262626;
 }
@@ -18,17 +29,25 @@ body {
 .global-menu__wrapper {
     max-width: 1152px;
     margin: 0 auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     height: 60px;
     padding-left: 10px;
     padding-right: 10px;
 }
+
 .global-menu__menu {
     color: white;
     font-size: 14px;
 }
+
 .global-menu__logo {
     width: 284px;
 }
@@ -43,7 +62,11 @@ body {
     font-size: 22px;
     margin: 0 auto;
     height: 120px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     padding-left: 10px;
     padding-right: 10px;
@@ -52,7 +75,6 @@ body {
 .content-container {
     background-color: white;
 }
-
 
 /*Borrow a loader from w3schools*/
 /*Kudos to https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader*/
@@ -78,9 +100,11 @@ body {
 
 @keyframes spin {
     0% {
+        -webkit-transform: rotate(0deg);
         transform: rotate(0deg);
     }
     100% {
+        -webkit-transform: rotate(360deg);
         transform: rotate(360deg);
     }
 }
@@ -95,6 +119,7 @@ body {
     padding-right: 10px;
     margin: 0 auto;
 }
+
 .content-container__header {
     text-align: center;
     max-width: 400px;
@@ -102,35 +127,49 @@ body {
 }
 
 .content-container__content {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
 }
+
 .content-container__item-wrapper {
-    max-width: 480px;
-    width: 100%;
+    width: 480px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     padding: 20px;
     margin-bottom: 40px;
     background-color: #E7E7E7;
 }
+
+.five-stars {
+    background-color: #F6F2CA;
+}
+
 .content-container__info {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -ms-flex-pack: distribute;
     justify-content: space-around;
     padding-left: 20px;
     font-size: 14px;
     font-weight: bold;
 }
-.content-container__header-link {
-    color: #347EB9;
-    text-decoration: none;
-}
-.content-container__header-link:hover {
-    color: #00719b;
-    text-decoration: underline;
-}
+
 .content-container__removebtn {
     color: #BE2121;
     cursor: pointer;
@@ -146,10 +185,20 @@ content-container__thumbnail {
     height: 80px;
 }
 
-@media only screen and (max-width : 1024px) {
+
+@media only screen and (max-width: 1024px) {
     .content-container__content {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
         flex-direction: column;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
         align-items: center;
+    }
+    .content-container__item-wrapper {
+        max-width: 480px;
+        width: 100%;
     }
 }
 
@@ -157,6 +206,7 @@ content-container__thumbnail {
     .global-menu__logo {
         width: 155px;
     }
+
     .global-menu__menu {
         font-size: 12px;
     }
