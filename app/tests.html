@@ -28,8 +28,8 @@
             "thumbnail": "https://0.s3.envato.com/files/224536384/Thumbnail.jpg",
             "rating": "4.0",
             "rating_decimal": "4.11",
-            },
-            {
+          },
+          {
             "id": "002",
             "item": "item2",
             "url": "fakeurl2",
@@ -37,7 +37,7 @@
             "user": "THEMECO",
             "rating": "5.0",
             "rating_decimal": "4.75",
-            }
+          }
         ];
 
         var setupStore = function (items) {
@@ -64,12 +64,14 @@
 
           // test fetch data only get called when itemsOfLastWeek is falsey
           var spy = expect.spyOn(store, 'fetchData');
-          store.getItems(function () {});
+          store.getItems(function () {
+          });
           expect(spy).toNotHaveBeenCalled();
 
           // test fetchData get called
           store.itemsOfLastWeek = null;
-          store.getItems(function () {});
+          store.getItems(function () {
+          });
           expect(spy).toHaveBeenCalled();
 
         })();
@@ -85,15 +87,17 @@
           var store = setupStore(items);
           var model = new envato.ListModel(store);
           var spyGetItems = expect.spyOn(store, 'getItems');
-          var spyRemoveItems = expect.spyOn(store,'removeItem');
-          model.getItems(function () {});
-          model.removeItem('id', function () {});
+          var spyRemoveItems = expect.spyOn(store, 'removeItem');
+          model.getItems(function () {
+          });
+          model.removeItem('id', function () {
+          });
           expect(spyGetItems).toHaveBeenCalled();
           expect(spyRemoveItems).toHaveBeenCalled();
 
         })();
 
-         /*****************
+        /*****************
          *   TEST VIEW
          ******************/
         (function () {
@@ -113,7 +117,8 @@
             .toInclude(items[0].thumbnail);
 
           // test showListItems
-          view.showListItems(items, function () {});
+          view.showListItems(items, function () {
+          });
           expect($div.childElementCount).toEqual(2);
 
           // test removeItem
@@ -131,6 +136,64 @@
           expect(view.$loader.classList.contains('hide')).toNotExist();
           view.handleStateChanged({"fetching": false});
           expect(view.$loader.classList.contains('hide')).toExist();
+
+        })();
+
+
+        /*****************
+         *   TEST Controller
+         ******************/
+        (function () {
+          var $div = document.createElement("div");
+          var view = new envato.View(null, $div);
+          var store = setupStore(items);
+          var model = new envato.ListModel(store);
+          var controller = new envato.Controller(model, view);
+
+          var spyCtrlBindEvent = expect.spyOn(controller, 'bindEvents');
+          controller.loadAllItems();
+          expect(spyCtrlBindEvent).toHaveBeenCalled();
+
+          expect(store.itemsOfLastWeek.length).toEqual(2);
+          expect($div.childElementCount).toEqual(2);
+          controller.removeItem('001');
+          expect($div.childElementCount).toEqual(1);
+          expect(store.itemsOfLastWeek.length).toEqual(1);
+
+        })();
+
+        /*****************
+         *   TEST Controller
+         ******************/
+        (function () {
+
+          var store = setupStore(items);
+          var $div = document.createElement("div");
+          var view = new envato.View(null, $div);
+
+          expect(store.stateChanged.listeners.length).toEqual(0);
+
+          store.stateChanged.attach(function (sender, args) {
+            view.removeItem(args);
+          });
+          expect(store.stateChanged.listeners.length).toEqual(1);
+          var spyRemoveItem = expect.spyOn(view, 'removeItem');
+          store.stateChanged.notify('001');
+          // test if listener get called correctly
+          expect(spyRemoveItem).toHaveBeenCalled();
+          expect(spyRemoveItem).toHaveBeenCalledWith('001');
+
+          store.stateChanged.attach(function (sender, args) {
+            view.handleStateChanged(args);
+          });
+          expect(store.stateChanged.listeners.length).toEqual(2);
+          var spyStateChanged = expect.spyOn(view, 'handleStateChanged');
+          store.stateChanged.notify('Testing');
+          // Both listeners should execute
+          expect(spyRemoveItem).toHaveBeenCalledWith('Testing');
+          expect(spyStateChanged).toHaveBeenCalledWith('Testing');
+
+
 
 
         })()

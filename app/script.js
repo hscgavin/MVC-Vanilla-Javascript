@@ -352,7 +352,7 @@
     self.view = view;
     // attach loader
     self.model.store.stateChanged.attach(function (sender, args) {
-      // this is just for loader only to avoid over engineering
+      // this is only for loader, avoid over engineering
       // although we can handel other states as well e.g. items assigned
       self.handleStateChanged(args)
     })
