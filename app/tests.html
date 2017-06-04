@@ -5,12 +5,96 @@
     <title>Test Runner</title>
   </head>
   <body>
+    <div id="loader" class="content-container__loader hide"></div>
+    <div id="main" class="content-container__content"></div>
+    <script>
+      // Set global variable TESTING here
+       window.TESTING = true;
+    </script>
     <script src='script.js'></script>
     <script src="https://npmcdn.com/expect/umd/expect.min.js"></script>
     <script>
       // Tests
       // Failing tests can be seen in your browser console
-      expect(false).toBe(true)
+
+      (function () {
+
+        var items = [
+          {
+            "id": "001",
+            "item": "Item1",
+            "url": "fakeul1",
+            "thumbnail": "https://0.s3.envato.com/files/224536384/Thumbnail.jpg",
+            "rating": "4.0",
+            "rating_decimal": "4.11",
+            },
+            {
+            "id": "002",
+            "item": "item2",
+            "url": "fakeurl2",
+            "user": "THEMECO",
+            "rating": "5.0",
+            "rating_decimal": "4.75",
+            }
+        ];
+
+        var setupStore = function (items) {
+          return new envato.Store(items, 'fakeapi')
+        };
+
+
+        /*****************
+         *   TEST STORE
+         ******************/
+        (function () {
+          var store = setupStore(items);
+
+          expect(store.api).toEqual('fakeapi');
+          // test sortItemsByRating
+          expect(store.itemsOfLastWeek[0].id).toEqual('002');
+          expect(store.itemsOfLastWeek[1].id).toEqual('001');
+          expect(store.itemsOfLastWeek.length).toEqual(2);
+
+          // test removeItem
+          store.removeItem('001');
+          expect(store.itemsOfLastWeek.length).toEqual(1);
+          expect(store.itemsOfLastWeek[0].id).toEqual(002);
+
+          // test fetch data only get called when itemsOfLastWeek is falsey
+          var spy = expect.spyOn(store, 'fetchData');
+          store.getItems(function () {});
+          expect(spy).toNotHaveBeenCalled();
+
+          // test fetchData get called
+          store.itemsOfLastWeek = null;
+          store.getItems(function () {});
+          expect(spy).toHaveBeenCalled();
+
+        })();
+
+
+        /*****************
+         *   TEST Model
+         *   We don't really need to test here
+         *   as we put data logic in Store
+         ******************/
+        (function () {
+
+          var store = setupStore(items);
+          var model = new envato.ListModel(store);
+          var spyGetItems = expect.spyOn(store, 'getItems');
+          var spyRemoveItems = expect.spyOn(store,'removeItem');
+          model.getItems(function () {});
+          model.removeItem('id', function () {});
+          expect(spyGetItems).toHaveBeenCalled();
+          expect(spyRemoveItems).toHaveBeenCalled();
+
+        })();
+
+      })();
+
+
+
     </script>
   </body>
 </html>

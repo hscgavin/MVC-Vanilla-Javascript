@@ -161,6 +161,7 @@
      */
     getItems: function (callback) {
       var self = this;
+      callback = callback || function () {};
       if (!self.itemsOfLastWeek) {
         self.fetchData(
           self.api,
@@ -429,10 +430,13 @@
 		this.view = new envato.View(null, document.getElementById('main')); // use default template
 		this.controller = new envato.Controller(this.model, this.view);
 	}
-	var app = new App();
+	if (!window.TESTING ) {
+    var app = new App();
 
-  window.addEventListener('load', function () {
-    app.controller.loadAllItems();
-  });
+    window.addEventListener('load', function () {
+      app.controller.loadAllItems();
+    });
+  }
+
 
 })();
