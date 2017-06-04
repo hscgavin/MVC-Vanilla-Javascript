@@ -124,6 +124,8 @@ a:hover {
     text-align: center;
     max-width: 400px;
     margin: 50px auto;
+    font-weight: bold;
+    color: #373737;
 }
 
 .content-container__content {
