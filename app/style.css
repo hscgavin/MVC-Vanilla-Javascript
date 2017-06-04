@@ -1,5 +1,5 @@
 /**
-I would define variables if with scss
+I would define variables if use scss
 Native css variable is not fully supported
  */
 
@@ -52,6 +52,43 @@ body {
 .content-container {
     background-color: white;
 }
+
+
+/*Borrow a loader from w3schools*/
+/*Kudos to https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader*/
+.content-container__loader {
+    border: 10px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 10px solid #81B441;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.hide {
+    display: none;
+}
+
 .content-container__wrapper {
     max-width: 1152px;
     padding-left: 10px;
@@ -108,6 +145,7 @@ content-container__thumbnail {
     width: 80px;
     height: 80px;
 }
+
 @media only screen and (max-width : 1024px) {
     .content-container__content {
         flex-direction: column;
@@ -123,4 +161,3 @@ content-container__thumbnail {
         font-size: 12px;
     }
 }
-

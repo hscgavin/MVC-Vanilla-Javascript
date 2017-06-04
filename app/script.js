@@ -7,6 +7,30 @@
 
 
   /**
+   * Create Event for notifying states changed
+   *
+   * @param sender
+   * @constructor
+   */
+  function Event(sender) {
+    this.sender = sender;
+    this.listeners = [];
+  }
+
+  Event.prototype = {
+    attach: function (listener) {
+      this.listeners.push(listener);
+    },
+    // find the sender and run the listener function
+    notify: function (args) {
+      for (var i = 0; i < this.listeners.length; i ++) {
+        this.listeners[i](this.sender, args);
+      }
+    }
+  };
+
+
+  /**
    * Creates a Model instance
    *
    * @constructor
@@ -60,6 +84,9 @@
     this.fetching = false;
     this.error = false;
     this.api = api || defaultApi;
+
+    //Initiate Event to notify observers about changes.
+    this.stateChanged = new Event(this);
   }
 
   Store.prototype = {
@@ -96,11 +123,17 @@
     fetchData: function (api, successCallback, errorCallback) {
       var self = this;
       self.fetching = true;
-
+      self.stateChanged.notify({
+        fetching: self.fetching
+      });
       var xhr = new XMLHttpRequest();
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE) {
+          self.fetching = false;
+          self.stateChanged.notify({
+            fetching: self.fetching
+          });
           if (xhr.status == 200) {
             successCallback.call(self, JSON.parse(xhr.responseText))
           }
@@ -112,7 +145,6 @@
             self.error = true;
             errorCallback.call(self, 'something else other than 200 was returned');
           }
-          self.fetching = false;
         }
       };
 
@@ -141,6 +173,8 @@
             alert(res); // handle error
           }
         )
+      } else {
+        callback.call(self, self.itemsOfLastWeek);
       }
     },
 
@@ -192,6 +226,7 @@
 
     this.template = template || defaultTemplate;
     this.$container = element;
+    this.$loader = document.getElementById('loader');
   }
 
   View.prototype = {
@@ -279,6 +314,20 @@
           }
         break;
       }
+    },
+
+    // Instead of keep creating functions here
+    // Should consider create a render function takes 2 arguments {action, data}
+    // e.g. render('removeItem, id)
+    // then render page accordingly
+
+    handleStateChanged: function(data) {
+      var self = this;
+      if (data.fetching) {
+        self.$loader.classList.remove('hide')
+      } else {
+        self.$loader.classList.add('hide')
+      }
     }
 
   };
@@ -297,8 +346,15 @@
 	 */
 
   function Controller(model, view) {
-    this.model = model;
-    this.view = view;
+    var self = this;
+    self.model = model;
+    self.view = view;
+    // attach loader
+    self.model.store.stateChanged.attach(function (sender, args) {
+      // this is just for loader only to avoid over engineering
+      // although we can handel other states as well e.g. items assigned
+      self.handleStateChanged(args)
+    })
   }
 
 
@@ -339,6 +395,12 @@
         self.view.removeItem(id)
       });
 
+    },
+    handleStateChanged: function (data) {
+      var self = this;
+      if (data) {
+        self.view.handleStateChanged(data)
+      }
     }
 
   };
