@@ -1,4 +1,4 @@
-# Envato Front End Coding Test
+# MVC vanilla Js
 
 Make sure you read **all** of this document carefully, and follow the guidelines in it. Pay particular attention to the "What We Care About" section.
 
@@ -69,13 +69,3 @@ Here's what you should aim for:
 - **Use git!** This is already a git repo. Commit small changes to it often so we can see your approach, and progress. Include the .git directory in the packaged .tar.gz file you send to us.
 
 We haven't hidden any nasty tricks in the test. Don't overthink it. Just write nice, solid code.
-
-## Submitting The Test
-
-In your project directory, run:
-
-```
-tar -czvf firstname_lastname.tar.gz .
-```
-
-Then email the generated tar.gz file back to the person that sent you the test.

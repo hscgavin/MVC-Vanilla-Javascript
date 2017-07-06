@@ -85,7 +85,7 @@
         (function () {
 
           var store = setupStore(items);
-          var model = new envato.ListModel(store);
+          var model = new themeforest.ListModel(store);
           var spyGetItems = expect.spyOn(store, 'getItems');
           var spyRemoveItems = expect.spyOn(store, 'removeItem');
           model.getItems(function () {
@@ -103,7 +103,7 @@
         (function () {
 
           var $div = document.createElement("div");
-          var view = new envato.View(null, $div);
+          var view = new themeforest.View(null, $div);
 
           expect(view.$container).toEqual($div);
 
@@ -144,10 +144,10 @@
          ******************/
         (function () {
           var $div = document.createElement("div");
-          var view = new envato.View(null, $div);
+          var view = new themeforest.View(null, $div);
           var store = setupStore(items);
-          var model = new envato.ListModel(store);
-          var controller = new envato.Controller(model, view);
+          var model = new themeforest.ListModel(store);
+          var controller = new themeforest.Controller(model, view);
 
           var spyCtrlBindEvent = expect.spyOn(controller, 'bindEvents');
           controller.loadAllItems();
@@ -168,7 +168,7 @@
 
           var store = setupStore(items);
           var $div = document.createElement("div");
-          var view = new envato.View(null, $div);
+          var view = new themeforest.View(null, $div);
 
           expect(store.stateChanged.listeners.length).toEqual(0);
 

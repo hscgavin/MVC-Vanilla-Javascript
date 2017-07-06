@@ -24,6 +24,7 @@ a:hover {
 
 .global-menu {
     background-color: #262626;
+    background-color: #eeeeee;
 }
 
 .global-menu__wrapper {
@@ -44,7 +45,7 @@ a:hover {
 }
 
 .global-menu__menu {
-    color: white;
+    color: black;
     font-size: 14px;
 }
 

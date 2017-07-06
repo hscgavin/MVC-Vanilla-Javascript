@@ -309,9 +309,11 @@
           var $removeBtns = self.$container.querySelectorAll('.content-container__removebtn')
           // Prevent throwing error if $removeBtns is an empty array
           if ($removeBtns.length) {
-            addEventListener('click', function (e) {
-              handler(e.target.getAttribute('data-itemId'));
-            });
+            for (var i = 0; i < $removeBtns.length; i++) {
+              $removeBtns[i].addEventListener('click', function (e) {
+                handler(e.target.getAttribute('data-itemId'));
+              });
+            }
           }
         break;
       }
@@ -406,12 +408,12 @@
 
   };
 
-  // Expose them with namespace envato
-  window.envato = {};
-  window.envato.Store = Store;
-  window.envato.ListModel = ListModel;
-  window.envato.View = View;
-  window.envato.Controller = Controller;
+  // Expose them with namespace themeForest
+  window.themeForest = {};
+  window.themeForest.Store = Store;
+  window.themeForest.ListModel = ListModel;
+  window.themeForest.View = View;
+  window.themeForest.Controller = Controller;
 
 
 })(window);
@@ -425,10 +427,10 @@
 
 
   function App() {
-		this.store = new envato.Store();
-		this.model = new envato.ListModel(this.store);
-		this.view = new envato.View(null, document.getElementById('main')); // use default template
-		this.controller = new envato.Controller(this.model, this.view);
+		this.store = new themeForest.Store();
+		this.model = new themeForest.ListModel(this.store);
+		this.view = new themeForest.View(null, document.getElementById('main')); // use default template
+		this.controller = new themeForest.Controller(this.model, this.view);
 	}
 	if (!window.TESTING ) {
     var app = new App();
